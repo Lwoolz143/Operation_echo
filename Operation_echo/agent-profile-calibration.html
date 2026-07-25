@@ -1472,7 +1472,24 @@ video {
     opacity: 0;
   }
 }
+/*
+  Prevent the standalone credential screen from flashing
+  during the onboarding handoff.
+*/
+
+.from-onboarding #credentialScreen {
+  display: none !important;
+}
   </style>
+  <script>
+  const arrivedFromOnboarding =
+    new URLSearchParams(window.location.search)
+      .get("from") === "onboarding";
+
+  if (arrivedFromOnboarding) {
+    document.documentElement.classList.add("from-onboarding");
+  }
+</script>
 </head>
 
 <body>
@@ -1766,16 +1783,25 @@ video {
       }, 10500);
     }
 
-    beginButton.addEventListener("click", async () => {
-      credentialScreen.classList.add("is-hidden");
-      calibrationScreen.classList.remove("is-hidden");
-      calibrationScreen.classList.add("is-active");
+ async function launchCalibration() {
+  credentialScreen.classList.add("is-hidden");
+  calibrationScreen.classList.remove("is-hidden");
+  calibrationScreen.classList.add("is-active");
 
-      await startCamera();
+  await startCamera();
 
-      updateReadings();
-      completeCalibration();
-    });
+  updateReadings();
+  completeCalibration();
+}
+
+beginButton.addEventListener("click", launchCalibration);
+
+const onboardingParameters =
+  new URLSearchParams(window.location.search);
+
+if (onboardingParameters.get("from") === "onboarding") {
+  launchCalibration();
+}
   </script>
 </body>
 </html>
