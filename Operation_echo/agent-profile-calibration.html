@@ -1480,6 +1480,136 @@ video {
 .from-onboarding #credentialScreen {
   display: none !important;
 }
+/*
+  Polished calibration-complete handoff.
+*/
+
+.completion {
+  background:
+    linear-gradient(rgba(1, 7, 4, 0.96), rgba(1, 7, 4, 0.985)),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 79px,
+      rgba(113, 136, 74, 0.035) 80px
+    );
+}
+
+.completion > div {
+  width: min(90vw, 900px);
+}
+
+.completion h2 {
+  max-width: 100%;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: 0.06em;
+  text-wrap: balance;
+}
+
+.completion-status {
+  transition:
+    color 500ms ease,
+    letter-spacing 500ms ease;
+}
+
+.assignment-progress {
+  position: relative;
+
+  width: min(72vw, 520px);
+  height: 2px;
+
+  margin: 30px auto 0;
+
+  overflow: hidden;
+
+  background: rgba(155, 173, 104, 0.16);
+  box-shadow: 0 0 14px rgba(174, 194, 106, 0.08);
+
+  opacity: 0;
+
+  transition: opacity 500ms ease;
+}
+
+.assignment-progress::before,
+.assignment-progress::after {
+  content: "";
+
+  position: absolute;
+  top: -3px;
+
+  width: 1px;
+  height: 8px;
+
+  background: rgba(215, 199, 118, 0.7);
+}
+
+.assignment-progress::before {
+  left: 0;
+}
+
+.assignment-progress::after {
+  right: 0;
+}
+
+.assignment-progress span {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    rgba(113, 139, 76, 0.65),
+    rgba(223, 205, 117, 0.98),
+    rgba(181, 205, 128, 0.9)
+  );
+
+  box-shadow:
+    0 0 9px rgba(224, 207, 118, 0.75),
+    0 0 18px rgba(137, 166, 86, 0.35);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.completion.is-downloading .assignment-progress {
+  opacity: 1;
+}
+
+.completion.is-downloading .assignment-progress span {
+  animation: downloadAssignment 3s cubic-bezier(0.22, 0.72, 0.18, 1)
+    forwards;
+}
+
+.completion.is-departing {
+  opacity: 0;
+  filter: blur(4px);
+  transform: scale(0.99);
+
+  transition:
+    opacity 700ms ease,
+    filter 700ms ease,
+    transform 700ms ease;
+}
+
+@keyframes downloadAssignment {
+  0% {
+    transform: scaleX(0);
+  }
+
+  35% {
+    transform: scaleX(0.28);
+  }
+
+  72% {
+    transform: scaleX(0.76);
+  }
+
+  100% {
+    transform: scaleX(1);
+  }
+}
   </style>
   <script>
   const arrivedFromOnboarding =
@@ -1662,6 +1792,12 @@ video {
         >
           Calibration complete
         </p>
+        <div
+  class="assignment-progress"
+  aria-hidden="true"
+>
+  <span></span>
+</div>
       </div>
     </section>
   </main>
@@ -1780,6 +1916,7 @@ video {
       window.setTimeout(() => {
         completionStatus.textContent =
           "Downloading assignment...";
+          completion.classList.add("is-downloading");
       }, 10500);
     }
 
