@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Operation Echo — Field Assignment 01</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --night: #050805;
+      --stone-dark: #25271e;
+      --stone-mid: #55513b;
+      --stone-light: #a99d72;
+      --parchment: #d8c99d;
+      --parchment-light: #eadfbd;
+      --ink: #312d21;
+      --gold: #d9bd63;
+      --gold-bright: #f4df8a;
+      --moss: #66704a;
+      --moss-light: #9aaa70;
+      --panel: rgba(11, 15, 9, 0.94);
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(115, 108, 62, 0.12),
+          transparent 38%
+        ),
+        linear-gradient(145deg, #030503, #091008 55%, #020302);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      padding: 28px 18px;
+      isolation: isolate;
+    }
+
+    .scene::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      opacity: 0.34;
+      background-image:
+        linear-gradient(rgba(211, 190, 105, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(211, 190, 105, 0.02) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        radial-gradient(
+          ellipse at center,
+          rgba(201, 177, 93, 0.11),
+          transparent 55%
+        );
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--gold-bright);
+      box-shadow:
+        0 0 7px rgba(244, 223, 138, 0.9),
+        0 0 14px rgba(217, 189, 99, 0.45);
+      opacity: 0;
+      animation: drift var(--duration) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes drift {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 18px, 0) scale(0.7);
+      }
+
+      25% {
+        opacity: 0.8;
+      }
+
+      70% {
+        opacity: 0.45;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--drift), -70px, 0) scale(1.2);
+      }
+    }
+
+    .assignment-shell {
+      position: relative;
+      width: min(920px, 100%);
+      margin: 0 auto;
+      padding: clamp(18px, 3vw, 34px);
+      border: 1px solid rgba(219, 193, 100, 0.35);
+      border-radius: 28px 19px 31px 22px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(73, 72, 52, 0.98),
+          rgba(31, 34, 25, 0.99) 46%,
+          rgba(76, 71, 49, 0.98)
+        );
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.78),
+        inset 0 0 0 7px rgba(15, 17, 12, 0.5),
+        inset 0 0 45px rgba(0, 0, 0, 0.68);
+    }
+
+    .assignment-shell::before,
+    .assignment-shell::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .assignment-shell::before {
+      inset: 8px;
+      border: 1px solid rgba(235, 211, 130, 0.16);
+      border-radius: 20px 28px 18px 25px;
+    }
+
+    .assignment-shell::after {
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0.45;
+      mix-blend-mode: screen;
+      background:
+        radial-gradient(circle at 8% 15%, rgba(255, 231, 150, 0.13), transparent 7%),
+        radial-gradient(circle at 93% 22%, rgba(255, 231, 150, 0.1), transparent 8%),
+        radial-gradient(circle at 13% 87%, rgba(255, 231, 150, 0.1), transparent 9%),
+        radial-gradient(circle at 88% 83%, rgba(255, 231, 150, 0.12), transparent 7%);
+    }
+
+    .stone-detail {
+      position: absolute;
+      z-index: 3;
+      width: 54px;
+      aspect-ratio: 1;
+      border: 1px solid rgba(219, 193, 100, 0.32);
+      border-radius: 48% 52% 43% 57%;
+      opacity: 0.66;
+      background:
+        radial-gradient(circle, transparent 21%, rgba(221, 196, 105, 0.48) 22% 24%, transparent 25%),
+        radial-gradient(circle, transparent 38%, rgba(221, 196, 105, 0.25) 39% 41%, transparent 42%);
+      filter: drop-shadow(0 0 8px rgba(217, 189, 99, 0.18));
+    }
+
+    .detail-one {
+      top: 25px;
+      left: 24px;
+      transform: rotate(-11deg);
+    }
+
+    .detail-two {
+      top: 35px;
+      right: 25px;
+      transform: rotate(17deg) scale(0.72);
+    }
+
+    .detail-three {
+      bottom: 30px;
+      left: 24px;
+      transform: rotate(9deg) scale(0.76);
+    }
+
+    .detail-four {
+      right: 23px;
+      bottom: 26px;
+      transform: rotate(-14deg);
+    }
+
+    .parchment {
+      position: relative;
+      z-index: 2;
+      min-height: calc(100vh - 56px);
+      padding:
+        clamp(38px, 6vw, 72px)
+        clamp(25px, 8vw, 88px)
+        clamp(42px, 7vw, 80px);
+      overflow: hidden;
+      border-radius: 17px 25px 15px 22px;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 249, 219, 0.46), transparent 38%),
+        linear-gradient(
+          112deg,
+          rgba(126, 105, 60, 0.13),
+          transparent 27%,
+          rgba(255, 255, 255, 0.12) 51%,
+          transparent 76%
+        ),
+        repeating-radial-gradient(
+          ellipse at 50% 50%,
+          rgba(75, 66, 43, 0.045) 0 1px,
+          transparent 2px 8px
+        ),
+        linear-gradient(135deg, var(--parchment), var(--parchment-light) 53%, #caba8c);
+      box-shadow:
+        inset 0 0 65px rgba(65, 50, 27, 0.32),
+        inset 0 0 0 1px rgba(255, 243, 193, 0.5),
+        0 10px 35px rgba(0, 0, 0, 0.45);
+    }
+
+    .parchment::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(92deg, transparent 48%, rgba(72, 60, 36, 0.1) 50%, transparent 52%),
+        repeating-linear-gradient(
+          4deg,
+          transparent 0 12px,
+          rgba(79, 67, 41, 0.055) 13px,
+          transparent 15px
+        );
+    }
+
+    .watermark {
+      position: absolute;
+      top: 26%;
+      left: 50%;
+      width: min(490px, 78%);
+      aspect-ratio: 1;
+      transform: translateX(-50%);
+      border: 2px solid rgba(76, 72, 46, 0.08);
+      border-radius: 50%;
+      opacity: 0.62;
+    }
+
+    .watermark::before,
+    .watermark::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .watermark::before {
+      inset: 8%;
+      border: 1px solid rgba(76, 72, 46, 0.09);
+    }
+
+    .watermark::after {
+      inset: 22%;
+      border: 1px dashed rgba(76, 72, 46, 0.08);
+    }
+
+    .assignment-header {
+      position: relative;
+      margin-bottom: 34px;
+      text-align: center;
+    }
+
+    .system-name {
+      margin: 0 0 11px;
+      color: #3a2d1a;
+      font-family: "Courier New", monospace;
+      font-size: clamp(0.68rem, 2.3vw, 0.82rem);
+      font-weight: 700;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: #3e3828;
+      font-size: clamp(2rem, 7vw, 3.7rem);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.05;
+      text-transform: uppercase;
+      text-shadow: 0 1px rgba(255, 255, 255, 0.25);
+    }
+
+    .record-number {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      color: #6b6040;
+      font-family: "Courier New", monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .record-number::before,
+    .record-number::after {
+      content: "";
+      width: 44px;
+      height: 1px;
+      background: rgba(91, 79, 45, 0.46);
+    }
+
+    .clue {
+      position: relative;
+      z-index: 2;
+      width: min(650px, 100%);
+      margin: 0 auto;
+      color: #302c20;
+      font-size: clamp(1rem, 2.6vw, 1.24rem);
+      line-height: 1.78;
+      text-align: center;
+    }
+
+    .clue-stanza {
+      margin: 0 0 1.65em;
+    }
+
+    .clue-stanza:last-child {
+      margin-bottom: 0;
+    }
+
+    .analysis-area {
+      position: relative;
+      z-index: 2;
+      width: min(650px, 100%);
+      margin: 44px auto 0;
+      padding-top: 32px;
+      border-top: 1px solid rgba(87, 75, 43, 0.35);
+      text-align: center;
+    }
+
+    .analysis-note {
+      margin: 0 0 17px;
+      color: #2f2416;
+      font-family: "Courier New", monospace;
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      line-height: 1.6;
+      text-transform: uppercase;
+    }
+
+    .analysis-button,
+    .modal-button {
+      min-height: 56px;
+      border: 1px solid rgba(74, 67, 40, 0.7);
+      color: #f4e6b5;
+      background:
+        linear-gradient(180deg, #303821, #151b12);
+      box-shadow:
+        0 10px 24px rgba(38, 31, 15, 0.23),
+        inset 0 0 0 1px rgba(232, 207, 117, 0.12);
+      font-family: "Courier New", monospace;
+      font-size: 0.77rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .analysis-button {
+      width: min(430px, 100%);
+      padding: 14px 20px;
+    }
+
+    .analysis-button:hover,
+    .analysis-button:focus-visible,
+    .modal-button:hover,
+    .modal-button:focus-visible {
+      border-color: var(--gold);
+      box-shadow:
+        0 12px 28px rgba(38, 31, 15, 0.34),
+        0 0 18px rgba(217, 189, 99, 0.17);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .analysis-button:disabled {
+      cursor: default;
+      opacity: 0.72;
+      transform: none;
+    }
+
+    .analysis-panel {
+      display: none;
+      width: min(650px, 100%);
+      margin: 25px auto 0;
+      padding: 22px;
+      border: 1px solid rgba(82, 74, 43, 0.42);
+      background: rgba(219, 205, 162, 0.45);
+      box-shadow: inset 0 0 25px rgba(73, 59, 31, 0.09);
+      text-align: left;
+    }
+
+    .analysis-panel.is-visible {
+      display: block;
+      animation: panelReveal 500ms ease both;
+    }
+
+    @keyframes panelReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .analysis-heading {
+      margin: 0 0 8px;
+      color: #47422d;
+      font-family: "Courier New", monospace;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+    }
+
+    .analysis-message {
+      min-height: 1.5em;
+      margin: 0 0 16px;
+      color: #554e36;
+      font-family: "Courier New", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      line-height: 1.55;
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(70, 65, 39, 0.5);
+      background: rgba(59, 55, 35, 0.18);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background:
+        linear-gradient(90deg, #667546, #d6bd62, #f3df91);
+      box-shadow: 0 0 12px rgba(218, 190, 99, 0.45);
+      transition: width 900ms linear;
+    }
+
+    .progress-percentage {
+      width: 45px;
+      color: #4e4932;
+      font-family: "Courier New", monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .hint-result {
+      display: none;
+      width: min(650px, 100%);
+      margin: 25px auto 0;
+      padding: 25px;
+      border: 1px solid rgba(81, 72, 41, 0.54);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(234, 220, 174, 0.75),
+          rgba(201, 185, 134, 0.57)
+        );
+      box-shadow:
+        inset 0 0 35px rgba(73, 59, 31, 0.12),
+        0 9px 22px rgba(67, 50, 22, 0.11);
+      text-align: left;
+    }
+
+    .hint-result.is-visible {
+      display: block;
+      animation: panelReveal 650ms ease both;
+    }
+
+    .hint-label {
+      margin: 0 0 13px;
+      color: #4b4f31;
+      font-family: "Courier New", monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .hint-text {
+      margin: 0;
+      color: #302b1e;
+      font-size: 1.04rem;
+      line-height: 1.65;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-backdrop.is-visible {
+      display: grid;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      padding: 30px;
+      border: 1px solid rgba(220, 195, 104, 0.5);
+      color: #eee3c1;
+      background:
+        linear-gradient(145deg, rgba(18, 24, 15, 0.99), rgba(5, 8, 5, 0.99));
+      box-shadow:
+        0 25px 75px rgba(0, 0, 0, 0.8),
+        inset 0 0 30px rgba(122, 143, 79, 0.07);
+    }
+
+    .modal-label {
+      margin: 0 0 10px;
+      color: var(--moss-light);
+      font-family: "Courier New", monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .modal h2 {
+      margin: 0 0 17px;
+      color: var(--gold-bright);
+      font-size: 1.65rem;
+      font-weight: 500;
+    }
+
+    .modal p {
+      margin: 0;
+      color: #c9c4ae;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .modal-button {
+      padding: 12px;
+    }
+
+    .modal-button.secondary {
+      color: #b7b5a5;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    @media (max-width: 620px) {
+      .scene {
+        padding: 10px;
+      }
+
+      .assignment-shell {
+        padding: 11px;
+        border-radius: 18px;
+      }
+
+      .parchment {
+        min-height: calc(100vh - 20px);
+        padding: 48px 20px 50px;
+      }
+
+      .stone-detail {
+        width: 36px;
+      }
+
+      .detail-one,
+      .detail-three {
+        left: 8px;
+      }
+
+      .detail-two,
+      .detail-four {
+        right: 8px;
+      }
+
+      .clue {
+        font-size: 1rem;
+        line-height: 1.72;
+      }
+
+      .modal-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+    /* Stone assignment artwork — final visual override */
+
+.assignment-shell {
+  width: min(960px, 100%);
+  padding:
+    clamp(72px, 10vw, 118px)
+    clamp(58px, 14vw, 138px)
+    clamp(86px, 12vw, 145px);
+
+  border: 0;
+  border-radius: 0;
+
+  background:
+    url("assets/images/operation-echo-stone-parchment-frame.png")
+    center center / 100% 100%
+    no-repeat;
+
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.82),
+    0 0 45px rgba(220, 185, 79, 0.13);
+}
+
+/* Remove the temporary computer-generated stone decorations */
+.assignment-shell::before,
+.assignment-shell::after,
+.stone-detail,
+.watermark {
+  display: none;
+}
+
+/* Allow the new artwork to provide the parchment and stone */
+.parchment {
+  min-height: 0;
+  padding: clamp(18px, 3vw, 34px) 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.parchment::before {
+  display: none;
+}
+
+/* Keep all wording safely above the artwork */
+.assignment-header,
+.clue,
+.analysis-panel,
+.analysis-result {
+  position: relative;
+  z-index: 4;
+}
+
+/* Full-screen phone presentation */
+@media (max-width: 620px) {
+  body {
+    align-items: flex-start;
+  }
+
+  .scene {
+    width: 100%;
+    padding: 0;
+  }
+
+  .assignment-shell {
+    width: 100%;
+    min-height: 100svh;
+    margin: 0;
+    padding:
+      clamp(58px, 15vw, 82px)
+      clamp(42px, 13vw, 58px)
+      clamp(72px, 18vw, 100px);
+
+    background-size: 100% 100%;
+  }
+
+  .parchment {
+    min-height: calc(100svh - 130px);
+    padding: 10px 0 24px;
+  }
+
+  .clue {
+    font-size: clamp(0.95rem, 4.15vw, 1.08rem);
+    line-height: 1.65;
+  }
+}
+/* Improve readability of the two small interface labels */
+.system-name,
+.analysis-note {
+  color: #2c2113;
+  background: rgba(232, 214, 164, 0.88);
+  box-shadow:
+    0 0 16px rgba(232, 214, 164, 0.72),
+    0 0 32px rgba(232, 214, 164, 0.35);
+  text-shadow: none;
+  backdrop-filter: blur(3px);
+}
+
+.system-name {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 7px 16px;
+}
+
+.analysis-note {
+  display: table;
+  max-width: calc(100% - 32px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 9px 18px;
+}
+  </style>
+</head>
+
+<body>
+  <main class="scene">
+    <div class="ambient-glow" aria-hidden="true"></div>
+    <div class="particles" id="particles" aria-hidden="true"></div>
+
+    <article class="assignment-shell">
+      <span class="stone-detail detail-one" aria-hidden="true"></span>
+      <span class="stone-detail detail-two" aria-hidden="true"></span>
+      <span class="stone-detail detail-three" aria-hidden="true"></span>
+      <span class="stone-detail detail-four" aria-hidden="true"></span>
+
+      <div class="parchment">
+        <div class="watermark" aria-hidden="true"></div>
+
+        <header class="assignment-header">
+          <p class="system-name">
+            Nature Preservation Interface
+          </p>
+
+          <h1>Field Assignment</h1>
+
+          <div class="record-number">
+            Directive 01
+          </div>
+        </header>
+
+        <section class="clue" aria-label="Field assignment clue">
+          <p class="clue-stanza">
+            Some memories are older than our own.<br>
+            They wait in water, earth, and weathered stone.<br>
+            Before the first page history could claim,<br>
+            Nature had already signed its name.
+          </p>
+
+          <p class="clue-stanza">
+            Roots held fast while rivers carved their way.<br>
+            Echoes quietly gathered day by day.<br>
+            Patient as the passing of each year,<br>
+            Guarding what was always hidden here.
+          </p>
+
+          <p class="clue-stanza">
+            Long before our first machine stirred time,<br>
+            The land was etched by nature’s grand design.<br>
+            Don’t get cold feet, there’s nothing here to fear.<br>
+            The oldest Echoes still grow stronger here.
+          </p>
+
+          <p class="clue-stanza">
+            A thousand miles of memories wind ahead,<br>
+            Following where ancient glaciers led.<br>
+            One staircase bears a devilish old name,<br>
+            Though time, not mischief, earned its lasting fame.
+          </p>
+
+          <p class="clue-stanza">
+            Seek where that devilish journey begins,<br>
+            Not on the trail, but where its story begins.<br>
+            Find the weathered marker bearing its name.<br>
+            Stand beside its memory to prove your claim.
+          </p>
+        </section>
+
+        <section class="analysis-area">
+          <p class="analysis-note">
+            One Headquarters analysis request is available for this Echo.
+          </p>
+
+          <button
+            class="analysis-button"
+            id="analysisButton"
+            type="button"
+          >
+            Headquarters Echo Analysis
+          </button>
+
+          <div
+            class="analysis-panel"
+            id="analysisPanel"
+            aria-live="polite"
+          >
+            <p class="analysis-heading">
+              Headquarters analysis in progress
+            </p>
+
+            <p
+              class="analysis-message"
+              id="analysisMessage"
+            >
+              Establishing secure analysis channel...
+            </p>
+
+            <div class="progress-row">
+              <div
+                class="progress-track"
+                role="progressbar"
+                aria-label="Headquarters analysis progress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+                id="progressTrack"
+              >
+                <div
+                  class="progress-fill"
+                  id="progressFill"
+                ></div>
+              </div>
+
+              <span
+                class="progress-percentage"
+                id="progressPercentage"
+              >
+                0%
+              </span>
+            </div>
+          </div>
+
+          <div
+            class="hint-result"
+            id="hintResult"
+            aria-live="polite"
+          >
+            <p class="hint-label">
+              Headquarters Analysis Complete
+            </p>
+
+            <p class="hint-text">
+              The location referenced is the Devil’s Staircase.
+              Do not search for a trail or staircase. Locate the
+              weathered historical marker bearing that name and
+              stand beside it to complete your field report.
+            </p>
+          </div>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <div
+    class="modal-backdrop"
+    id="confirmationModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirmationTitle"
+  >
+    <div class="modal">
+      <p class="modal-label">
+        Headquarters Resource Request
+      </p>
+
+      <h2 id="confirmationTitle">
+        Request Echo Analysis?
+      </h2>
+
+      <p>
+        This will use your team’s single analysis request for this
+        Echo. Headquarters processing requires approximately five
+        minutes.
+      </p>
+
+      <div class="modal-actions">
+        <button
+          class="modal-button secondary"
+          id="cancelAnalysis"
+          type="button"
+        >
+          Return to Clue
+        </button>
+
+        <button
+          class="modal-button"
+          id="confirmAnalysis"
+          type="button"
+        >
+          Request Analysis
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ANALYSIS_DURATION = 5 * 60 * 1000;
+    const STORAGE_KEY = "operationEchoAnalysisField01";
+
+    const analysisButton = document.getElementById("analysisButton");
+    const analysisPanel = document.getElementById("analysisPanel");
+    const analysisMessage = document.getElementById("analysisMessage");
+    const progressTrack = document.getElementById("progressTrack");
+    const progressFill = document.getElementById("progressFill");
+    const progressPercentage = document.getElementById("progressPercentage");
+    const hintResult = document.getElementById("hintResult");
+    const confirmationModal = document.getElementById("confirmationModal");
+    const cancelAnalysis = document.getElementById("cancelAnalysis");
+    const confirmAnalysis = document.getElementById("confirmAnalysis");
+    const particles = document.getElementById("particles");
+
+    let analysisInterval = null;
+
+    function createParticles() {
+      for (let index = 0; index < 38; index += 1) {
+        const particle = document.createElement("span");
+        particle.className = "particle";
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${15 + Math.random() * 85}%`;
+        particle.style.setProperty(
+          "--duration",
+          `${8 + Math.random() * 10}s`
+        );
+        particle.style.setProperty(
+          "--delay",
+          `${Math.random() * -14}s`
+        );
+        particle.style.setProperty(
+          "--drift",
+          `${-35 + Math.random() * 70}px`
+        );
+
+        particles.appendChild(particle);
+      }
+    }
+
+    function getAnalysisRecord() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY));
+      } catch {
+        return null;
+      }
+    }
+
+    function setAnalysisRecord(record) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+    }
+
+    function getAnalysisMessage(progress) {
+      if (progress < 15) {
+        return "Establishing secure analysis channel...";
+      }
+
+      if (progress < 35) {
+        return "Comparing historical and environmental references...";
+      }
+
+      if (progress < 58) {
+        return "Tracing geographic memory signatures...";
+      }
+
+      if (progress < 78) {
+        return "Cross-referencing archival field records...";
+      }
+
+      if (progress < 94) {
+        return "Resolving probable location reference...";
+      }
+
+      return "Preparing Headquarters findings...";
+    }
+
+    function showCompletedAnalysis() {
+      if (analysisInterval) {
+        window.clearInterval(analysisInterval);
+        analysisInterval = null;
+      }
+
+      analysisPanel.classList.remove("is-visible");
+      hintResult.classList.add("is-visible");
+
+      analysisButton.textContent =
+        "Headquarters Analysis · Complete";
+      analysisButton.disabled = true;
+
+      progressFill.style.width = "100%";
+      progressPercentage.textContent = "100%";
+      progressTrack.setAttribute("aria-valuenow", "100");
+    }
+
+    function updateAnalysis() {
+      const record = getAnalysisRecord();
+
+      if (!record || !record.startedAt) {
+        return;
+      }
+
+      const elapsed = Date.now() - record.startedAt;
+      const progress = Math.min(
+        100,
+        Math.floor((elapsed / ANALYSIS_DURATION) * 100)
+      );
+
+      if (progress >= 100) {
+        setAnalysisRecord({
+          ...record,
+          completed: true
+        });
+
+        showCompletedAnalysis();
+        return;
+      }
+
+      analysisPanel.classList.add("is-visible");
+      hintResult.classList.remove("is-visible");
+
+      analysisButton.textContent =
+        "Headquarters Analysis · Processing";
+      analysisButton.disabled = true;
+
+      progressFill.style.width = `${progress}%`;
+      progressPercentage.textContent = `${progress}%`;
+      progressTrack.setAttribute(
+        "aria-valuenow",
+        String(progress)
+      );
+
+      analysisMessage.textContent =
+        getAnalysisMessage(progress);
+    }
+
+    function beginAnalysis() {
+      const existingRecord = getAnalysisRecord();
+
+      if (!existingRecord) {
+        setAnalysisRecord({
+          startedAt: Date.now(),
+          completed: false
+        });
+      }
+
+      confirmationModal.classList.remove("is-visible");
+      updateAnalysis();
+
+      if (!analysisInterval) {
+        analysisInterval = window.setInterval(
+          updateAnalysis,
+          1000
+        );
+      }
+
+      analysisPanel.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+
+    function restoreAnalysisState() {
+      const record = getAnalysisRecord();
+
+      if (!record) {
+        return;
+      }
+
+      if (
+        record.completed ||
+        Date.now() - record.startedAt >= ANALYSIS_DURATION
+      ) {
+        showCompletedAnalysis();
+        return;
+      }
+
+      updateAnalysis();
+
+      analysisInterval = window.setInterval(
+        updateAnalysis,
+        1000
+      );
+    }
+
+    analysisButton.addEventListener("click", () => {
+      const record = getAnalysisRecord();
+
+      if (record) {
+        updateAnalysis();
+        return;
+      }
+
+      confirmationModal.classList.add("is-visible");
+      cancelAnalysis.focus();
+    });
+
+    cancelAnalysis.addEventListener("click", () => {
+      confirmationModal.classList.remove("is-visible");
+      analysisButton.focus();
+    });
+
+    confirmAnalysis.addEventListener("click", beginAnalysis);
+
+    confirmationModal.addEventListener("click", (event) => {
+      if (event.target === confirmationModal) {
+        confirmationModal.classList.remove("is-visible");
+        analysisButton.focus();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Escape" &&
+        confirmationModal.classList.contains("is-visible")
+      ) {
+        confirmationModal.classList.remove("is-visible");
+        analysisButton.focus();
+      }
+    });
+
+    createParticles();
+    restoreAnalysisState();
+  </script>
+</body>
+</html>
