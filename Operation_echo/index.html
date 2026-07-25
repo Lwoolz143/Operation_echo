@@ -2,273 +2,876 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Operation Echo Field Terminal</title>
 
-<style>
-* {
-box-sizing: border-box;
-}
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
 
-html,
-body {
-margin: 0;
-width: 100%;
-min-height: 100%;
-}
+<meta
+name="theme-color"
+content="#07110a"
+>
 
-body {
-min-height: 100vh;
-display: grid;
-place-items: center;
-overflow: hidden;
-padding: 24px;
+<title>Nature Preservation Interface</title>
 
-background:
-radial-gradient(circle at 50% 42%, rgba(95, 150, 82, 0.22), transparent 34%),
-linear-gradient(145deg, #050e08, #0d2012 55%, #040b07);
-
-color: #efe9d3;
-font-family: "Segoe UI", Arial, sans-serif;
-}
-
-body::before {
-content: "";
-position: fixed;
-inset: 0;
-pointer-events: none;
-
-background:
-repeating-linear-gradient(
-0deg,
-rgba(255, 255, 255, 0.018) 0,
-rgba(255, 255, 255, 0.018) 1px,
-transparent 1px,
-transparent 4px
-);
-}
-
-body::after {
-content: "";
-position: fixed;
-inset: 0;
-pointer-events: none;
-box-shadow: inset 0 0 160px 50px rgba(0, 0, 0, 0.86);
-}
-
-.terminal {
-position: relative;
-width: min(720px, 92vw);
-padding: 76px 36px 64px;
-text-align: center;
-
-background:
-linear-gradient(
-145deg,
-rgba(34, 59, 35, 0.75),
-rgba(10, 24, 14, 0.9)
-);
-
-border: 1px solid rgba(219, 183, 101, 0.55);
-border-radius: 6px;
-
-box-shadow:
-0 30px 90px rgba(0, 0, 0, 0.7),
-inset 0 0 55px rgba(102, 157, 86, 0.09);
-
-animation: terminalArrival 1.3s ease-out both;
-}
-
-.terminal::before {
-content: "";
-position: absolute;
-inset: 12px;
-border: 1px solid rgba(219, 183, 101, 0.2);
-pointer-events: none;
-}
-
-.system-label {
-position: absolute;
-top: 24px;
-left: 50%;
-transform: translateX(-50%);
-width: max-content;
-max-width: 82%;
-
-color: rgba(224, 196, 127, 0.78);
-font-size: 11px;
-font-weight: 700;
-letter-spacing: 3px;
-}
-
-.emblem {
-width: 92px;
-height: 92px;
-display: grid;
-place-items: center;
-margin: 0 auto 26px;
-
-border: 1px solid rgba(219, 183, 101, 0.6);
-border-radius: 50%;
-
-color: #dbb765;
-font-family: Georgia, serif;
-font-size: 30px;
-font-weight: 700;
-
-box-shadow:
-0 0 28px rgba(219, 183, 101, 0.15),
-inset 0 0 22px rgba(219, 183, 101, 0.08);
-}
-
-h1 {
-margin: 0 0 28px;
-
-color: #dbb765;
-font-family: Georgia, "Times New Roman", serif;
-font-size: clamp(34px, 7vw, 62px);
-letter-spacing: clamp(4px, 1.2vw, 10px);
-line-height: 1.05;
-
-text-shadow:
-0 0 18px rgba(219, 183, 101, 0.25),
-0 3px 12px rgba(0, 0, 0, 0.8);
-}
-
-.headquarters {
-margin-bottom: 8px;
-
-color: #9cc38a;
-font-size: 13px;
-font-weight: 700;
-letter-spacing: 4px;
-}
-
-.department {
-margin-bottom: 46px;
-
-color: #f4eed7;
-font-family: Georgia, "Times New Roman", serif;
-font-size: clamp(19px, 3vw, 26px);
-}
-
-.status {
-display: inline-block;
-min-width: min(440px, 80vw);
-padding: 17px 22px;
-
-background: rgba(2, 10, 5, 0.62);
-border: 1px solid rgba(126, 185, 112, 0.36);
-
-color: #9fd391;
-font-family: Consolas, "Courier New", monospace;
-font-size: clamp(14px, 2.5vw, 18px);
-letter-spacing: 1px;
-
-box-shadow:
-inset 0 0 20px rgba(83, 164, 69, 0.08),
-0 0 25px rgba(83, 164, 69, 0.08);
-}
-
-.cursor {
-display: inline-block;
-width: 8px;
-height: 1em;
-margin-left: 8px;
-vertical-align: -2px;
-
-background: #9fd391;
-box-shadow: 0 0 8px rgba(159, 211, 145, 0.8);
-
-animation: cursorBlink 0.9s steps(1) infinite;
-}
-
-@keyframes terminalArrival {
-from {
-opacity: 0;
-transform: scale(0.96) translateY(16px);
-filter: blur(5px);
-}
-
-to {
-opacity: 1;
-transform: scale(1) translateY(0);
-filter: blur(0);
-}
-}
-
-@keyframes cursorBlink {
-50% {
-opacity: 0;
-}
-}
-
-@media (max-width: 520px) {
-body {
-padding: 14px;
-}
-
-.terminal {
-padding: 70px 20px 52px;
-}
-
-.status {
-min-width: 100%;
-}
-}
-.emblem-logo {
-display: block;
-width: 150px;
-height: 150px;
-margin: 0 auto 28px;
-object-fit: contain;
-border-radius: 50%;
-filter:
-drop-shadow(0 0 20px rgba(219, 183, 101, 0.22))
-drop-shadow(0 12px 26px rgba(0, 0, 0, 0.5));
-}
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-<main class="terminal">
-<div class="system-label">
-NPD FIELD TERMINAL • SECURE CONNECTION
+<div class="screen-noise" aria-hidden="true"></div>
+<div class="screen-vignette" aria-hidden="true"></div>
+
+<main class="device-shell">
+
+<!-- Permanent device header -->
+<header class="device-header">
+<div class="device-identity">
+<span class="device-agency">
+CHEESE HEADQUARTERS
+</span>
+
+<span class="device-name">
+NATURE PRESERVATION INTERFACE
+</span>
 </div>
 
-<img class="emblem-logo" src="assets/logo/logo.png" alt="Operation Echo">
+<div class="device-version">
+NPI // FIELD UNIT 01
+</div>
+</header>
+
+<!-- Startup screen -->
+<section
+id="bootScreen"
+class="screen boot-screen active"
+aria-live="polite"
+>
+<div class="boot-content">
+
+<div class="logo-frame">
+<div class="logo-ring logo-ring-outer"></div>
+<div class="logo-ring logo-ring-inner"></div>
+
+<img
+class="operation-logo"
+src="assets/logo/logo.png"
+alt="Operation Echo"
+>
+</div>
+
+<div class="boot-title-group">
+<p class="classification">
+CLASSIFIED PROPRIETARY SYSTEM
+</p>
 
 <h1>OPERATION ECHO</h1>
 
-<div class="headquarters">
-CHEESE HEADQUARTERS
-</div>
-
-<div class="department">
+<p class="department-name">
 Nature Preservation Department
+</p>
 </div>
 
-<div class="status">
-<span id="statusText">Initializing Field Terminal...</span>
-<span class="cursor"></span>
+<div class="boot-console">
+<div class="boot-console-header">
+<span>SYSTEM INITIALIZATION</span>
+
+<span id="bootPercentage">
+00%
+</span>
 </div>
+
+<div class="boot-progress-track">
+<div
+id="bootProgress"
+class="boot-progress-fill"
+></div>
+</div>
+
+<div class="boot-message-row">
+<span class="terminal-prompt">
+&gt;
+</span>
+
+<span id="bootMessage">
+Establishing secure connection...
+</span>
+
+<span class="terminal-cursor"></span>
+</div>
+</div>
+
+<div class="boot-footer">
+<span>
+ENCRYPTED CONNECTION
+</span>
+
+<span class="boot-footer-divider"></span>
+
+<span>
+HEADQUARTERS VERIFIED
+</span>
+</div>
+</div>
+</section>
+
+<!-- Main NPI interface -->
+<section
+id="interfaceScreen"
+class="screen interface-screen"
+aria-live="polite"
+>
+<div class="instrument-status-bar">
+
+<div class="instrument-status">
+<span class="status-light active"></span>
+
+<div>
+<span class="status-label">
+SECURE LINK
+</span>
+
+<span class="status-value">
+ESTABLISHED
+</span>
+</div>
+</div>
+
+<div class="instrument-status">
+<span class="status-light active"></span>
+
+<div>
+<span class="status-label">
+FIELD UNIT
+</span>
+
+<span class="status-value">
+ONLINE
+</span>
+</div>
+</div>
+
+<div class="instrument-status">
+<span class="status-light standby"></span>
+
+<div>
+<span class="status-label">
+ECHO LENS
+</span>
+
+<span class="status-value">
+STANDBY
+</span>
+</div>
+</div>
+
+</div>
+
+<div class="interface-content">
+
+<section class="lens-panel">
+
+<div class="panel-heading">
+<div>
+<p class="panel-code">
+MODULE EL-01
+</p>
+
+<h2>Echo Lens</h2>
+</div>
+
+<span class="module-state">
+READY
+</span>
+</div>
+
+<div class="lens-display">
+
+<div class="lens-grid"></div>
+
+<div class="lens-corner top-left"></div>
+<div class="lens-corner top-right"></div>
+<div class="lens-corner bottom-left"></div>
+<div class="lens-corner bottom-right"></div>
+
+<div class="lens-circle lens-circle-one"></div>
+<div class="lens-circle lens-circle-two"></div>
+<div class="lens-circle lens-circle-three"></div>
+
+<div class="lens-crosshair horizontal"></div>
+<div class="lens-crosshair vertical"></div>
+
+<div class="lens-core">
+<span class="lens-core-dot"></span>
+
+<span class="lens-core-label">
+NO ACTIVE RESONANCE
+</span>
+</div>
+
+</div>
+
+<div class="lens-readouts">
+
+<div class="readout">
+<span class="readout-label">
+RESONANCE
+</span>
+
+<span class="readout-value">
+0.00
+</span>
+</div>
+
+<div class="readout">
+<span class="readout-label">
+COHERENCE
+</span>
+
+<span class="readout-value">
+0%
+</span>
+</div>
+
+<div class="readout">
+<span class="readout-label">
+TEMPORAL LOCK
+</span>
+
+<span class="readout-value">
+INACTIVE
+</span>
+</div>
+
+</div>
+</section>
+
+<section class="mission-panel">
+
+<div class="mission-heading">
+<p class="panel-code">
+ACTIVE FIELD ASSIGNMENT
+</p>
+
+<h2>Awaiting Echo Marker</h2>
+</div>
+
+<p class="mission-description">
+The Nature Preservation Interface is operational.
+Locate an authorized field marker to begin environmental
+resonance acquisition.
+</p>
+
+<div class="instruction-box">
+
+<div class="instruction-icon">
+<span class="nfc-wave wave-one"></span>
+<span class="nfc-wave wave-two"></span>
+<span class="nfc-wave wave-three"></span>
+</div>
+
+<div class="instruction-text">
+<span class="instruction-title">
+FIELD PROCEDURE
+</span>
+
+<span class="instruction-detail">
+Hold this device near an authorized NPD marker.
+</span>
+</div>
+
+</div>
+
+<div class="system-note">
+<span class="system-note-label">
+SYSTEM NOTE
+</span>
+
+<p>
+Echo markers do not contain stored memories.
+They allow the Echo Lens to identify, stabilize,
+and render naturally occurring temporal resonance
+already present at the location.
+</p>
+</div>
+
+</section>
+
+</div>
+
+<!-- Field Report Module -->
+<section
+id="fieldReportModule"
+class="field-report-module hidden"
+aria-live="polite"
+>
+<div class="field-report-header">
+<div>
+<p class="panel-code">
+MODULE FR-01
+</p>
+
+<h2 id="fieldReportTitle">
+Field Report
+</h2>
+</div>
+
+<span
+id="fieldReportState"
+class="module-state"
+>
+REQUIRED
+</span>
+</div>
+
+<div
+id="reportCaptureView"
+class="report-view active"
+>
+<div class="report-instructions">
+<span class="report-step">
+VISUAL CONFIRMATION REQUIRED
+</span>
+
+<p>
+Headquarters requires a field photograph confirming
+the team and current Echo location.
+</p>
+</div>
+
+<div class="photo-capture-zone">
+<div class="camera-reticle">
+<span class="camera-corner top-left"></span>
+<span class="camera-corner top-right"></span>
+<span class="camera-corner bottom-left"></span>
+<span class="camera-corner bottom-right"></span>
+
+<div class="camera-symbol">
+<span class="camera-lens"></span>
+</div>
+
+<span class="capture-status">
+NO IMAGE ATTACHED
+</span>
+</div>
+</div>
+
+<button
+id="capturePhotoButton"
+class="interface-button primary-button"
+type="button"
+>
+CAPTURE FIELD PHOTOGRAPH
+</button>
+
+<input
+id="photoInput"
+class="photo-input"
+type="file"
+accept="image/*"
+capture="environment"
+>
+</div>
+
+<div
+id="reportPreviewView"
+class="report-view"
+>
+<div class="photo-preview-frame">
+<img
+id="photoPreview"
+class="photo-preview"
+alt="Selected field report"
+>
+
+<div class="photo-confirmation">
+<span class="confirmation-light"></span>
+IMAGE ACQUIRED
+</div>
+</div>
+
+<div class="report-metadata">
+<div class="metadata-item">
+<span class="metadata-label">
+REPORT TYPE
+</span>
+
+<span class="metadata-value">
+ECHO LOCATION CONFIRMATION
+</span>
+</div>
+
+<div class="metadata-item">
+<span class="metadata-label">
+FIELD UNIT
+</span>
+
+<span class="metadata-value">
+NPI-01
+</span>
+</div>
+
+<div class="metadata-item">
+<span class="metadata-label">
+TIMESTAMP
+</span>
+
+<span
+id="reportTimestamp"
+class="metadata-value"
+>
+PENDING
+</span>
+</div>
+</div>
+
+<div class="report-actions">
+<button
+id="replacePhotoButton"
+class="interface-button secondary-button"
+type="button"
+>
+REPLACE PHOTOGRAPH
+</button>
+
+<button
+id="transmitReportButton"
+class="interface-button primary-button"
+type="button"
+>
+TRANSMIT FIELD REPORT
+</button>
+</div>
+</div>
+
+<div
+id="reportTransmissionView"
+class="report-view"
+>
+<div class="transmission-display">
+<div class="transmission-icon">
+<span class="transmission-ring ring-one"></span>
+<span class="transmission-ring ring-two"></span>
+<span class="transmission-ring ring-three"></span>
+<span class="transmission-core"></span>
+</div>
+
+<p
+id="transmissionStatus"
+class="transmission-status"
+>
+Preparing encrypted field packet...
+</p>
+
+<div class="transmission-progress-track">
+<div
+id="transmissionProgress"
+class="transmission-progress-fill"
+></div>
+</div>
+
+<span
+id="transmissionPercentage"
+class="transmission-percentage"
+>
+00%
+</span>
+</div>
+</div>
+
+<div
+id="reportWaitingView"
+class="report-view"
+>
+<div class="authorization-waiting">
+<div class="authorization-symbol">
+<span class="authorization-pulse"></span>
+<span class="authorization-pulse delay-one"></span>
+<span class="authorization-pulse delay-two"></span>
+<span class="authorization-center"></span>
+</div>
+
+<span class="report-step">
+TRANSMISSION CONFIRMED
+</span>
+
+<h3>
+Awaiting Headquarters Authorization
+</h3>
+
+<p>
+Field report received. Headquarters is comparing
+the submitted image with current temporal readings.
+</p>
+
+<div class="authorization-status-box">
+<span class="authorization-status-label">
+AUTHORIZATION STATUS
+</span>
+
+<span class="authorization-status-value">
+REVIEW IN PROGRESS
+</span>
+</div>
+
+<button
+id="authorizeReportButton"
+class="interface-button primary-button authorization-test-button"
+type="button"
+>
+SIMULATE HEADQUARTERS AUTHORIZATION
+</button>
+
+<p class="testing-label">
+DEVELOPMENT TEST CONTROL
+</p>
+
+</div>
+</div>
+</section>
+
+<!-- Headquarters and Echo Playback Module -->
+<section
+id="echoSequenceModule"
+class="echo-sequence-module hidden"
+aria-live="polite"
+>
+<div class="echo-sequence-header">
+<div>
+<p
+id="echoModuleCode"
+class="panel-code"
+>
+MODULE HQ-01
+</p>
+
+<h2 id="echoModuleTitle">
+Headquarters Authorization
+</h2>
+</div>
+
+<span
+id="echoModuleState"
+class="module-state"
+>
+GRANTED
+</span>
+</div>
+
+<!-- Authorization granted -->
+<div
+id="authorizationGrantedView"
+class="echo-sequence-view active"
+>
+<div class="authorization-granted-display">
+<div class="granted-symbol">
+<span class="granted-ring granted-ring-one"></span>
+<span class="granted-ring granted-ring-two"></span>
+<span class="granted-ring granted-ring-three"></span>
+<span class="granted-check"></span>
+</div>
+
+<p class="sequence-eyebrow">
+FIELD REPORT VERIFIED
+</p>
+
+<h3>Authorization Granted</h3>
+
+<div class="authorization-readouts">
+<div>
+<span>VISUAL CONFIRMATION</span>
+<strong>ACCEPTED</strong>
+</div>
+
+<div>
+<span>TEMPORAL COHERENCE</span>
+<strong>VERIFIED</strong>
+</div>
+
+<div>
+<span>ECHO ACCESS</span>
+<strong>UNLOCKED</strong>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Headquarters transmission -->
+<div
+id="headquartersTransmissionView"
+class="echo-sequence-view"
+>
+<div class="headquarters-transmission-display">
+<div class="transmission-source">
+<span class="source-light"></span>
+
+<div>
+<span class="source-label">
+INCOMING TRANSMISSION
+</span>
+
+<span class="source-name">
+CHEESE HEADQUARTERS
+</span>
+</div>
+</div>
+
+<div class="headquarters-message-frame">
+<p id="headquartersMessageText">
+Agent, your field report has been verified.
+</p>
+</div>
+
+<div class="audio-channel-status">
+<span
+id="audioStatusLight"
+class="audio-status-light"
+></span>
+
+<span id="audioStatusText">
+Secure communications channel available.
+</span>
+</div>
+
+<audio
+id="headquartersAudio"
+preload="auto"
+>
+<source
+src="assets/audio/headquarters-authorization.mp3"
+type="audio/mpeg"
+>
+</audio>
+
+<button
+id="playTransmissionButton"
+class="interface-button primary-button"
+type="button"
+>
+OPEN HEADQUARTERS TRANSMISSION
+</button>
+
+<button
+id="continueTransmissionButton"
+class="interface-button primary-button hidden"
+type="button"
+>
+INITIALIZE ECHO RENDERING
+</button>
+</div>
+</div>
+
+<!-- Echo rendering -->
+<div
+id="echoRenderingView"
+class="echo-sequence-view"
+>
+<div class="echo-rendering-display">
+<div class="rendering-lens">
+<span class="render-ring render-ring-one"></span>
+<span class="render-ring render-ring-two"></span>
+<span class="render-ring render-ring-three"></span>
+<span class="rendering-core"></span>
+<span class="rendering-scan-line"></span>
+</div>
+
+<p class="sequence-eyebrow">
+ECHO LENS ACTIVE
+</p>
+
+<h3>Rendering Temporal Reconstruction</h3>
+
+<p id="renderingStatus">
+Preparing reconstruction engine...
+</p>
+
+<div class="rendering-progress-track">
+<div
+id="renderingProgress"
+class="rendering-progress-fill"
+></div>
+</div>
+
+<span
+id="renderingPercentage"
+class="rendering-percentage"
+>
+00%
+</span>
+</div>
+</div>
+
+<!-- Echo playback -->
+<div
+id="echoPlaybackView"
+class="echo-sequence-view"
+>
+<div class="echo-video-frame">
+<video
+id="echoVideo"
+class="echo-video"
+playsinline
+controls
+preload="metadata"
+>
+<source
+src="assets/videos/echo-1.mp4"
+type="video/mp4"
+>
+</video>
+
+<div
+id="videoFallback"
+class="video-fallback hidden"
+>
+<div class="fallback-symbol">
+ECHO
+</div>
+
+<p>
+No Echo video was found in the assigned archive.
+</p>
+
+<span>
+Use simulated playback to continue testing.
+</span>
+</div>
+
+<div class="video-classification">
+TEMPORAL RECONSTRUCTION // AUTHORIZED VIEWING
+</div>
+</div>
+
+<button
+id="beginEchoPlaybackButton"
+class="interface-button primary-button"
+type="button"
+>
+BEGIN ECHO RECONSTRUCTION
+</button>
+
+<button
+id="completeSimulatedPlaybackButton"
+class="interface-button secondary-button hidden"
+type="button"
+>
+COMPLETE SIMULATED PLAYBACK
+</button>
+</div>
+
+<!-- Echo analysis -->
+<div
+id="echoAnalysisView"
+class="echo-sequence-view"
+>
+<div class="echo-analysis-display">
+<div class="analysis-heading">
+<div>
+<p class="sequence-eyebrow">
+TEMPORAL EVENT LOGGED
+</p>
+
+<h3>Echo Analysis</h3>
+</div>
+
+<span class="analysis-status">
+COMPLETE
+</span>
+</div>
+
+<div class="analysis-readouts">
+<div class="analysis-readout">
+<span>MEMORY CLASSIFICATION</span>
+<strong>FOUNDATION</strong>
+</div>
+
+<div class="analysis-readout">
+<span>NATURAL ARCHIVE</span>
+<strong>STONE</strong>
+</div>
+
+<div class="analysis-readout">
+<span>RECONSTRUCTION CONFIDENCE</span>
+<strong>99.82%</strong>
+</div>
+</div>
+
+<div class="echo-lead-document">
+<div class="echo-lead-heading">
+<span>ECHO LEAD</span>
+<span>DECRYPTED</span>
+</div>
+
+<div class="typed-text-row">
+<p
+id="typedEchoLead"
+class="typed-echo-lead"
+></p>
+
+<span class="typing-cursor"></span>
+</div>
+</div>
+
+<button
+id="completeLocationButton"
+class="interface-button primary-button hidden"
+type="button"
+>
+ACKNOWLEDGE ECHO LEAD
+</button>
+</div>
+</div>
+
+<!-- Location complete -->
+<div
+id="locationCompleteView"
+class="echo-sequence-view"
+>
+<div class="location-complete-display">
+<div class="location-complete-symbol">
+<span></span>
+</div>
+
+<p class="sequence-eyebrow">
+FIELD RECORD UPDATED
+</p>
+
+<h3>Echo Location Complete</h3>
+
+<p>
+The recovered memory has been added to the active
+Operation Echo case file.
+</p>
+
+<div class="location-complete-status">
+<span>NEXT ECHO LEAD</span>
+<strong>RELEASED</strong>
+</div>
+
+<button
+id="restartWalkthroughButton"
+class="interface-button secondary-button"
+type="button"
+>
+RESET WALKTHROUGH
+</button>
+</div>
+</div>
+</section>
+
+<footer class="interface-footer">
+<span>
+NATURE PRESERVATION DEPARTMENT
+</span>
+
+<span>
+AUTHORIZED AGENT ACCESS ONLY
+</span>
+</footer>
+</section>
+
 </main>
 
-<script>
-const messages = [
-"Initializing Field Terminal...",
-"Calibrating Temporal Sensors...",
-"Environmental Memory Detected.",
-"The Echo is responding."
-];
-
-let messageIndex = 0;
-const statusText = document.getElementById("statusText");
-
-setInterval(() => {
-messageIndex = (messageIndex + 1) % messages.length;
-statusText.textContent = messages[messageIndex];
-}, 2200);
-</script>
+<script src="app.js"></script>
 </body>
 </html>
